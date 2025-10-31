@@ -1,25 +1,41 @@
-A=[[1,2],[3,4]]
-for i in A:
-    for j in i:
-        print(j,end=" ")
-    print()
+import networkx as nx
 
-print()
+def a_star_pathFinding(graph, start_node, goal_node, heuristic):
+    try:
+        path = nx.astar_path(graph, start_node, goal_node, heuristic=heuristic, weight='weight')
+        return path
+    except nx.NetworkXNoPath:
+        return None
 
-g=[[0,0,0],
-   [0,1,0],
-   [0,0,0]]
+if __name__ == "__main__":
+    G = nx.Graph()
+    G.add_edge('A', 'B', weight=6)
+    G.add_edge('A', 'F', weight=3)
+    G.add_edge('B', 'C', weight=3)
+    G.add_edge('B', 'D', weight=2)
+    G.add_edge('C', 'E', weight=5)
+    G.add_edge('D', 'E', weight=8)
+    G.add_edge('F', 'G', weight=1)
+    G.add_edge('G', 'H', weight=7)
+    G.add_edge('H', 'I', weight=2)
+    G.add_edge('E', 'I', weight=5)
+    G.add_edge('I', 'J', weight=3)
 
-for i in g:
-    for j in i:
-        print(j,end=" ")
-    print()
+    heuristic_values = {
+        'A': 11, 'B': 6, 'C': 5, 'D': 7, 'E': 3, 'F': 6,
+        'G': 5, 'H': 3, 'I': 1, 'J': 0
+    }
 
-print()
+    def example_heuristic(u, v):
+        return heuristic_values.get(u, 0)
 
-def traversal(g,i,j,list):
-    if(i==len(g)-1 and j==len(g[0])-1):
-        list.append((i,j))
-        print(list)
-        return
-    
+    start = 'A'
+    goal = 'J'
+    path = a_star_pathFinding(G, start, goal, example_heuristic)
+
+    if path:
+        print(f"path found from {start} to {goal}: {path}")
+        length = nx.astar_path_length(G, start, goal, heuristic=example_heuristic, weight='weight')
+        print(f"path length: {length}")
+    else:
+        print(f"no path found from {start} to {goal}")
